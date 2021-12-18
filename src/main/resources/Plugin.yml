@@ -1,0 +1,4 @@
+name: Clans
+version: 1.0.0
+api-version: 1.17
+main: org.spigotmc.clans.Main
