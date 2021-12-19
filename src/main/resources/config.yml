@@ -1,0 +1,11 @@
+# MySQL Database Information
+host: "localhost"
+port: 3306
+database: ""
+username: ""
+password: ""
+
+# Clan Settings
+allow_clan_creation: true
+allow_clan_wallet: true
+clan_creation_cost: 0

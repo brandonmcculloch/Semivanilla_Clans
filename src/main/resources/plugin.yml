@@ -1,0 +1,9 @@
+name: Clans
+main: org.spigotmc.clans.Clans
+version: 1.0.0
+api-version: 1.17
+commands:
+  clans:
+    description: Main command for the clans plugin
+    usage: /<command>
+    permission: clans.clans

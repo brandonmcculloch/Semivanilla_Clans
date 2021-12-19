@@ -26,10 +26,10 @@ public class CommandHandler implements CommandExecutor {
                     }
                 }
             } else {
-                 commandSender.sendMessage("You must enter valid command parameters.");
+                 commandSender.sendMessage("Invalid command. Type /clan help to learn more.");
             }
         } else {
-            commandSender.sendMessage("Commands must be issued by a player!");
+            commandSender.sendMessage("Clan commands must be issued by a player.");
         }
         return true;
     }

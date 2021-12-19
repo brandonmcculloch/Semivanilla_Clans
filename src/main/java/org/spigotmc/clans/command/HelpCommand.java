@@ -5,11 +5,12 @@ import org.bukkit.command.CommandSender;
 public class HelpCommand implements CommandInterface {
     @Override
     public String getName() {
-        return "rename";
+        return "help";
     }
 
     @Override
     public boolean execute(CommandSender commandSender, String[] args) {
+        commandSender.sendMessage("You executed the " + getName() + " command!");
         return false;
     }
 }
