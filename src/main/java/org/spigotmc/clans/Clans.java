@@ -6,12 +6,13 @@ import org.spigotmc.clans.database.DatabaseManager;
 
 public class Clans extends JavaPlugin {
 
-    private DatabaseManager databaseManager;
+    public static Clans clans;
 
     @Override
     public void onEnable() {
+        clans = this;
         saveDefaultConfig();
-        databaseManager = new DatabaseManager(this.getConfig());
+        DatabaseManager.getInstance().initialize();
         getCommand("clans").setExecutor(new CommandHandler());
         getLogger().info("Plugin started!");
     }
@@ -19,5 +20,9 @@ public class Clans extends JavaPlugin {
     @Override
     public void onDisable() {
         getLogger().info("Plugin stopped!");
+    }
+
+    public static Clans getInstance() {
+        return clans;
     }
 }
