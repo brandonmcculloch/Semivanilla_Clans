@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS clans_clan
     name        VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL,
     origin      TIMESTAMP    NOT NULL,
+    status      VARCHAR(255) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -20,7 +21,7 @@ CREATE TABLE IF NOT EXISTS clans_history
     id        INT                                 NOT NULL AUTO_INCREMENT,
     uuid      CHAR(36)                            NOT NULL,
     clan_id   INT                                 NOT NULL,
-    activity  ENUM('CREATE', 'UPDATE', 'DISBAND') NOT NULL,
+    activity  VARCHAR(255) NOT NULL,
     parameter VARCHAR(255)                        NOT NULL,
     PRIMARY KEY (id)
 );
@@ -37,17 +38,16 @@ CREATE TABLE IF NOT EXISTS clans_invite
 
 CREATE TABLE IF NOT EXISTS clans_wallet
 (
-    id      INT              NOT NULL AUTO_INCREMENT,
     clan_id INT              NOT NULL,
     balance DOUBLE PRECISION NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (clan_id)
 );
 
 CREATE TABLE IF NOT EXISTS clans_wallet_history
 (
     id        INT                         NOT NULL AUTO_INCREMENT,
-    wallet_id INT                         NOT NULL,
-    activity  ENUM('deposit', 'withdraw') NOT NULL,
+    clan_id   INT                         NOT NULL,
+    activity  VARCHAR(255) NOT NULL,
     amount    DOUBLE PRECISION            NOT NULL,
     PRIMARY KEY (id)
 );

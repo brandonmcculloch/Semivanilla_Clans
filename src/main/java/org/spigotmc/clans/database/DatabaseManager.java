@@ -32,6 +32,10 @@ public class DatabaseManager {
         return instance;
     }
 
+    public Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
+
     public void initialize() {
         String setup = "";
         try (InputStream in = getClass().getClassLoader().getResourceAsStream("db.sql")) {

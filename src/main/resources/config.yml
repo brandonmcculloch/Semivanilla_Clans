@@ -5,7 +5,9 @@ database: ""
 username: ""
 password: ""
 
+# Symbol
+clan_currency_symbol: $
+
 # Clan Settings
-allow_clan_creation: true
-allow_clan_wallet: true
-clan_creation_cost: 0
+clan_creation_enabled: true
+clan_creation_cost: 0.0

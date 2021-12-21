@@ -14,6 +14,7 @@ public class CommandHandler implements CommandExecutor {
     public CommandHandler() {
         commands.add(new HelpCommand());
         commands.add(new CreateClanCommand());
+        commands.add(new DisbandClanCommand());
     }
 
     @Override
