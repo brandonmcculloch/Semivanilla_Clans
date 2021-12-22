@@ -1,5 +1,7 @@
 package org.spigotmc.clans.command;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spigotmc.clans.Clans;
@@ -7,8 +9,7 @@ import org.spigotmc.clans.database.DatabaseQuery;
 import org.spigotmc.clans.model.ClanModel;
 import org.spigotmc.clans.model.UserModel;
 
-public class CreateClanCommand implements CommandInterface {
-
+public class CreateCommand implements CommandInterface {
     @Override
     public String getName() {
         return "create";
@@ -31,19 +32,17 @@ public class CreateClanCommand implements CommandInterface {
             commandSender.sendMessage("It appears you are already in a clan.");
             return true;
         }
-
         String confirmCost = "There is a cost of " + symbol + clan_creation_cost + ". Type confirm at " +
                 "the end of the command to confirm these costs. I.e \"/clans create <name> confirm\".";
-
         if (args.length == 2) {
             if (clan_creation_cost == 0) {
-                commandSender.sendMessage(createClan(args[1], user));
+                commandSender.sendMessage(createClan(args[1], user, 0));
             } else {
                 commandSender.sendMessage(confirmCost);
             }
         } else if (args.length == 3) {
-            if (args[2].equalsIgnoreCase("confirm")) {
-                commandSender.sendMessage(createClan(args[1], user));
+            if (clan_creation_cost == 0 || args[2].equalsIgnoreCase("confirm")) {
+                commandSender.sendMessage(createClan(args[1], user, clan_creation_cost));
             } else {
                 commandSender.sendMessage(confirmCost);
             }
@@ -53,18 +52,26 @@ public class CreateClanCommand implements CommandInterface {
         return true;
     }
 
-    private String createClan(String name, UserModel user) {
+    private String createClan(String name, UserModel user, double cost) {
+        if(!name.matches("[a-zA-Z0-9]*") || name.length() < 3 || name.length() > 24) return "Invalid clan name." +
+                " Clan names can only be 3 - 24 characters composing of letters and numbers.";
         if (DatabaseQuery.getInstance().retrieveClan(name) != null) return "A clan with that name already exists.";
-        if (DatabaseQuery.getInstance().createClan(name)) {
-            ClanModel clan = DatabaseQuery.getInstance().retrieveClan(name);
-            if (DatabaseQuery.getInstance().updateUserClan(user, clan.getId(), 1)) {
-                return "Clan " + name + " has been successfully created!";
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(user.getPlayer().getUniqueId());
+        double balance = Clans.getInstance().getEconomy().getBalance(offlinePlayer);
+        if (balance >= cost) {
+            if (DatabaseQuery.getInstance().createClan(name)) {
+                ClanModel clan = DatabaseQuery.getInstance().retrieveClan(name);
+                if (DatabaseQuery.getInstance().updateUserClan(user, clan.getId(), 1)) {
+                    Clans.getInstance().getEconomy().withdrawPlayer(offlinePlayer, cost);
+                    return "Clan " + name + " has been successfully created!";
+                } else {
+                    return "Database failed to update user row";
+                }
             } else {
-                return "Database failed to update user row";
+                return "Database failed to create clan";
             }
         } else {
-            return "Database failed to create clan";
+            return "You can't afford to create a new clan. The price is " + cost;
         }
     }
-
 }

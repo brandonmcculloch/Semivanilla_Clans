@@ -13,8 +13,11 @@ public class CommandHandler implements CommandExecutor {
 
     public CommandHandler() {
         commands.add(new HelpCommand());
-        commands.add(new CreateClanCommand());
-        commands.add(new DisbandClanCommand());
+        commands.add(new CreateCommand());
+        commands.add(new DisbandCommand());
+        commands.add(new WalletCommand());
+        commands.add(new InviteCommand());
+        commands.add(new AcceptCommand());
     }
 
     @Override
@@ -26,12 +29,8 @@ public class CommandHandler implements CommandExecutor {
                         cmd.execute(commandSender, strings);
                     }
                 }
-            } else {
-                 commandSender.sendMessage("Invalid command. Type /clan help to learn more.");
-            }
-        } else {
-            commandSender.sendMessage("Clan commands must be issued by a player.");
-        }
+            } else commandSender.sendMessage("Invalid command. Type /clan help to learn more.");
+        } else commandSender.sendMessage("Clan commands must be issued by a player.");
         return true;
     }
 
