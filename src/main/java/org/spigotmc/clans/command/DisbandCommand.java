@@ -12,6 +12,11 @@ public class DisbandCommand implements CommandInterface {
     }
 
     @Override
+    public String getUsage() {
+        return "/clans disband <confirm>";
+    }
+
+    @Override
     public boolean execute(CommandSender commandSender, String[] args) {
         Player player = (Player)commandSender;
         UserModel user = DatabaseQuery.getInstance().retrieveUser(player);

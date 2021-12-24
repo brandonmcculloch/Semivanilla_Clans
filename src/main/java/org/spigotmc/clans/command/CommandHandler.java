@@ -14,10 +14,14 @@ public class CommandHandler implements CommandExecutor {
     public CommandHandler() {
         commands.add(new HelpCommand());
         commands.add(new CreateCommand());
+        commands.add(new RenameCommand());
         commands.add(new DisbandCommand());
         commands.add(new WalletCommand());
         commands.add(new InviteCommand());
         commands.add(new AcceptCommand());
+        commands.add(new LeaveCommand());
+        commands.add(new LeaderboardCommand());
+        commands.add(new InfoCommand());
     }
 
     @Override

@@ -15,8 +15,17 @@ public class WalletCommand implements CommandInterface {
     }
 
     @Override
+    public String getUsage() {
+        return "/clans wallet <deposit/withdraw> <amount>";
+    }
+
+    @Override
     public boolean execute(CommandSender commandSender, String[] args) {
         UserModel user = DatabaseQuery.getInstance().retrieveUser((Player) commandSender);
+        if (user.getClanId() == -1) {
+            commandSender.sendMessage("You must be in a clan to use this command");
+            return true;
+        }
         switch (args.length) {
             case 1:
                 commandSender.sendMessage(showWalletBalance(user));
@@ -32,7 +41,6 @@ public class WalletCommand implements CommandInterface {
     }
 
     private String showWalletBalance(UserModel user) {
-        if (user.getClanId() == -1) return "You must be in a clan to use this command";
         double balance = DatabaseQuery.getInstance().checkClanBalance(user.getClanId());
         return "Your clan balance is: " + balance;
     }
@@ -48,7 +56,7 @@ public class WalletCommand implements CommandInterface {
         } catch (NumberFormatException e) {
             return instructions();
         }
-        if(amt < 1) return "Please enter a value greater than 0.";
+        if (amt < 1) return "Please enter a value greater than 0.";
         if (transaction.equalsIgnoreCase("deposit")) {
             return depositTransaction(amt, user);
         } else if (transaction.equalsIgnoreCase("withdraw")) {
@@ -64,8 +72,9 @@ public class WalletCommand implements CommandInterface {
         if (balance < amount) return "Insufficient funds. Your balance is too low to perform this transaction.";
         if (Clans.getInstance().getEconomy().withdrawPlayer(offlinePlayer, amount).transactionSuccess()) {
             if (DatabaseQuery.getInstance().depositClanBalance(user.getClanId(), amount)) {
-                DatabaseQuery.getInstance().createWalletHistory(user.getClanId(), user.getUUID(), "DEPOSIT", amount);
-                return "Transaction performed successfully.";
+                if (DatabaseQuery.getInstance().createWalletHistory(user.getClanId(), user.getUUID(), "DEPOSIT", amount)) {
+                    return "Transaction performed successfully. " + amount + " deposited.";
+                } else return "Transaction performed successfully. Failed to create transaction history.";
             } else {
                 Clans.getInstance().getEconomy().depositPlayer(offlinePlayer, amount);
                 return "Database failed to deposit clan balance.";
@@ -82,8 +91,9 @@ public class WalletCommand implements CommandInterface {
         if (balance < amount) return "Insufficient funds. Your clan balance is too low to perform this transaction.";
         if (Clans.getInstance().getEconomy().depositPlayer(offlinePlayer, amount).transactionSuccess()) {
             if (DatabaseQuery.getInstance().withdrawClanBalance(user.getClanId(), amount)) {
-                DatabaseQuery.getInstance().createWalletHistory(user.getClanId(), user.getUUID(), "WITHDRAW", amount);
-                return "Transaction performed successfully.";
+                if (DatabaseQuery.getInstance().createWalletHistory(user.getClanId(), user.getUUID(), "WITHDRAW", amount)) {
+                    return "Transaction performed successfully. " + amount + " withdrawn.";
+                } else return "Transaction performed successfully. Failed to create transaction history.";
             } else {
                 Clans.getInstance().getEconomy().withdrawPlayer(offlinePlayer, amount);
                 return "Database failed to withdraw clan balance.";

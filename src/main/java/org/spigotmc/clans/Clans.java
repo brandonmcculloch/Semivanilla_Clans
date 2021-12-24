@@ -8,6 +8,12 @@ import org.spigotmc.clans.command.CommandHandler;
 import org.spigotmc.clans.database.DatabaseManager;
 import org.spigotmc.clans.event.Listener;
 
+/*
+   ___ _      _   _  _ ___
+  / __| |    /_\ | \| / __|
+ | (__| |__ / _ \| .` \__ \
+  \___|____/_/ \_\_|\_|___/
+ */
 public class Clans extends JavaPlugin {
 
     public static Clans clans;
@@ -25,7 +31,10 @@ public class Clans extends JavaPlugin {
         DatabaseManager.getInstance().initialize();
         getCommand("clans").setExecutor(new CommandHandler());
         getServer().getPluginManager().registerEvents(new Listener(), this);
-        getLogger().info("Plugin started!");
+        getLogger().info("   ___ _      _   _  _ ___");
+        getLogger().info("  / __| |    /_\\ | \\| / __|");
+        getLogger().info(" | (__| |__ / _ \\| .` \\__ \\");
+        getLogger().info("  \\___|____/_/ \\_\\_|\\_|___/");
     }
 
     private boolean setupEconomy() {

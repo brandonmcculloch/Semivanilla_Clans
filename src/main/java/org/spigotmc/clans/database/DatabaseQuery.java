@@ -1,11 +1,13 @@
 package org.spigotmc.clans.database;
 
 import org.bukkit.entity.Player;
+import org.spigotmc.clans.Clans;
 import org.spigotmc.clans.model.ClanModel;
 import org.spigotmc.clans.model.InviteModel;
 import org.spigotmc.clans.model.UserModel;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DatabaseQuery {
 
@@ -40,7 +42,7 @@ public class DatabaseQuery {
     }
 
     public ClanModel retrieveClan(String name) {
-        String sql = "SELECT * FROM clans_clan WHERE name = ?;";
+        String sql = "SELECT * FROM clans_clan WHERE name = ? AND status = 'ACTIVE';";
         try {
             Connection conn = DatabaseManager.getInstance().getConnection();
             PreparedStatement statement = conn.prepareStatement(sql);
@@ -186,13 +188,13 @@ public class DatabaseQuery {
             Connection conn = DatabaseManager.getInstance().getConnection();
             PreparedStatement statement = conn.prepareStatement(eject);
             statement.setInt(1, id);
-            boolean ejected = statement.execute();
+            statement.execute();
             statement = conn.prepareStatement(disband);
             statement.setInt(1, id);
-            boolean disbanded = statement.execute();
+            statement.execute();
             statement.close();
             conn.close();
-            return ejected && disbanded;
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -316,5 +318,33 @@ public class DatabaseQuery {
         return false;
     }
 
+    public ArrayList<ClanModel> retrieveLeaderboards(int page) {
+        String sql = "SELECT * FROM clans_clan ORDER BY balance DESC LIMIT 10 OFFSET ?;";
+        try {
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, (page-1)*10);
+            ResultSet resultSet = statement.executeQuery();
+            ArrayList<ClanModel> clanList = new ArrayList<>();
+            while(resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String clanName = resultSet.getString("name");
+                String desc = resultSet.getString("description");
+                Timestamp origin = resultSet.getTimestamp("origin");
+                String status = resultSet.getString("status");
+                double balance = resultSet.getDouble("balance");
+                ClanModel clan = new ClanModel(id, clanName, desc, origin, status, balance);
+                Clans.getInstance().getLogger().info("Clan " + clan.getName() + " added to list!");
+                clanList.add(clan);
+            }
+            resultSet.close();
+            statement.close();
+            conn.close();
+            return clanList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

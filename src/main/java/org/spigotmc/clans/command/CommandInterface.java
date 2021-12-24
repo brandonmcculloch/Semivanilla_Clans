@@ -6,6 +6,8 @@ public interface CommandInterface {
 
     String getName();
 
+    String getUsage();
+
     boolean execute(CommandSender commandSender, String[] args);
 
 }
